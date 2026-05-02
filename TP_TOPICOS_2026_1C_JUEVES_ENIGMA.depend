@@ -1,0 +1,34 @@
+# depslib dependency file v1.0
+1777679877 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\main.c
+	"header.h"
+
+1777679964 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\header.h
+	<stdio.h>
+	<stdlib.h>
+	"GBT/gbt.h"
+
+1777680436 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\funciones.c
+	"header.h"
+
+1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt.h
+	"gbt_entrada.h"
+	"gbt_graficos.h"
+	"gbt_logger.h"
+	"gbt_temporizador.h"
+	"gbt_vector.h"
+
+1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt_entrada.h
+	<stdint.h>
+
+1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt_graficos.h
+	<stdint.h>
+
+1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt_logger.h
+
+1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt_temporizador.h
+	<stdint.h>
+
+1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt_vector.h
+	<stdlib.h>
+	<stdint.h>
+

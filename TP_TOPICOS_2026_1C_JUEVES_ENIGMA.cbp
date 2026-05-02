@@ -13,7 +13,12 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="../../libgbt-dist-main/release/GBT_v2026.1C.01/include/" />
 				</Compiler>
+				<Linker>
+					<Add option="-lgbt" />
+					<Add directory="../../libgbt-dist-main/release/GBT_v2026.1C.01/lib" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/TP_TOPICOS_2026_1C_JUEVES_ENIGMA" prefix_auto="1" extension_auto="1" />
