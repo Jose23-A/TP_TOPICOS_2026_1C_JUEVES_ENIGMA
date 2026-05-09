@@ -1,13 +1,13 @@
 # depslib dependency file v1.0
-1777679877 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\main.c
+1778182809 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\main.c
 	"header.h"
 
-1777679964 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\header.h
+1778182889 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\header.h
 	<stdio.h>
 	<stdlib.h>
 	"GBT/gbt.h"
 
-1777680436 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\funciones.c
+1778182005 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\funciones.c
 	"header.h"
 
 1776646998 e:\ingenieria\topicos_de_programacion\libgbt-dist-main\release\gbt_v2026.1c.01\include\\gbt\gbt.h

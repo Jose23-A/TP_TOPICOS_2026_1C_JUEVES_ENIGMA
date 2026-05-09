@@ -29,6 +29,55 @@ const uint8_t textura_magenta[TAM_BLOQUE][TAM_BLOQUE] = {
     {0, 0, 0, 0, 0, 0, 0, 0}
 };
 
+const uint8_t pieza_I[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
+    {INDICE_CIAN,   INDICE_CIAN,   INDICE_CIAN,   INDICE_CIAN},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP}
+};
+
+const uint8_t pieza_O[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_TRANSP, INDICE_AMARILLO, INDICE_AMARILLO, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_AMARILLO, INDICE_AMARILLO, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP,   INDICE_TRANSP,   INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP,   INDICE_TRANSP,   INDICE_TRANSP}
+};
+
+const uint8_t pieza_T[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_TRANSP, INDICE_MAGENTA, INDICE_TRANSP,  INDICE_TRANSP},
+    {INDICE_MAGENTA,INDICE_MAGENTA, INDICE_MAGENTA, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP,  INDICE_TRANSP,  INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP,  INDICE_TRANSP,  INDICE_TRANSP}
+};
+
+const uint8_t pieza_S[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_TRANSP, INDICE_VERDE_C, INDICE_VERDE_C, INDICE_TRANSP},
+    {INDICE_VERDE_C,INDICE_VERDE_C, INDICE_TRANSP,  INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP,  INDICE_TRANSP,  INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP,  INDICE_TRANSP,  INDICE_TRANSP}
+};
+
+const uint8_t pieza_Z[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_ROJO_C, INDICE_ROJO_C, INDICE_TRANSP, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_ROJO_C, INDICE_ROJO_C, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP}
+};
+
+const uint8_t pieza_J[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_AZUL_C, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
+    {INDICE_AZUL_C, INDICE_AZUL_C, INDICE_AZUL_C, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP}
+};
+
+const uint8_t pieza_L[DIMENSION_GENERAL][DIMENSION_GENERAL] = {
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_NARANJA, INDICE_TRANSP},
+    {INDICE_NARANJA,INDICE_NARANJA,INDICE_NARANJA, INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP,  INDICE_TRANSP},
+    {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP,  INDICE_TRANSP}
+};
+
 tGBT_ColorRGB paletaCGA[CANT_COLORES] =
 {
 
@@ -78,10 +127,30 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // --- Estado de la Ficha ---
-    // Posición lógica inicial (en la grilla de 10x20)
-    int16_t ficha_columna = TABLERO_ANCHO / 2 - 1; // Centrada horizontalmente
-    int16_t ficha_fila = 0;                        // Arriba del todo
+    uint8_t tablero_principal[TABLERO_ALTO][TABLERO_ANCHO];
+
+    for(int f = 0; f < TABLERO_ALTO; f++) {
+        for(int c = 0; c < TABLERO_ANCHO; c++) {
+            tablero_principal[f][c] = INDICE_TRANSP;
+        }
+    }
+/*
+    tablero_principal[18][4] = INDICE_AMARILLO;
+    tablero_principal[18][5] = INDICE_AMARILLO;
+    tablero_principal[19][4] = INDICE_AMARILLO;
+    tablero_principal[19][5] = INDICE_AMARILLO;
+*/
+    // ... (Creación de tablero_principal) ...
+
+    // Declaramos la pieza que realmente va a caer y moverse
+    uint8_t pieza_activa[DIMENSION_GENERAL][DIMENSION_GENERAL];
+
+    // Para probar, cargamos el molde de la "T" en nuestra pieza activa
+    cargar_nueva_pieza(pieza_T, pieza_activa);
+
+    // Posición lógica inicial (ajustada para el ancho 4)
+    int16_t ficha_columna = (TABLERO_ANCHO / 2) - 2;
+    int16_t ficha_fila = 0;
 
     int corriendo = 1;
     printf("Programa iniciado. Ficha cayendo por gravedad.\n");
@@ -109,6 +178,7 @@ int main(int argc, char* argv[])
             {
                 ficha_fila++; // Cae una fila lógicamente
                 printf("Ficha cayó a la fila: %d\n", ficha_fila);
+                printf("Ficha columna: %d\n", ficha_columna);
             }
             else
             {
@@ -121,7 +191,26 @@ int main(int argc, char* argv[])
         gbt_borrar_backbuffer(INDICE_NEGRO); // Limpiar pantalla en negro [cite: 3]
 
         // Dibujamos la pieza en sus coordenadas lógicas actuales
-        dibujar_pieza(ficha_columna, ficha_fila, pieza_z, textura_magenta);
+        if(gbt_tecla_presionada(GBTK_IZQUIERDA) && ficha_columna > 0)
+        {
+            ficha_columna--;
+        }
+        if(gbt_tecla_presionada(GBTK_DERECHA) && ficha_columna < 8)
+        {
+            ficha_columna++;
+        }
+        if(gbt_tecla_presionada(GBTK_q))
+        {
+            printf("presionaste Q");
+            rotar_pieza(pieza_activa, GIRO_Q); // Izquierda
+        }
+        if(gbt_tecla_presionada(GBTK_e))
+        {
+            printf("presionaste E");
+            rotar_pieza(pieza_activa, GIRO_E);  // Derecha
+        }
+        dibujar_tablero(tablero_principal, textura_magenta);
+        dibujar_pieza(ficha_columna, ficha_fila, pieza_activa, textura_magenta);
 
         gbt_volcar_backbuffer(); // Mostrar el frame dibujado [cite: 3]
 
