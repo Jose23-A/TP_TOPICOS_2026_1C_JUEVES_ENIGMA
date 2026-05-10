@@ -3,19 +3,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "GBT/gbt.h"
 
 #define TABLERO_ANCHO 10
 #define TABLERO_ALTO 20
+#define CENTRO_TABLERO (TABLERO_ANCHO / 2) - 2
 
 #define GIRO_Q -1
 #define GIRO_E 1
 
 #define TAM_BLOQUE 8
-#define COLOR_AMARILLO 14
-#define DIMENSION_PIEZA 2
-#define DIMENSION_Z 3
-#define DIMENSION_GRAL 4
+#define DIMENSION_PIEZA 4
 
 #define ANCHO_VENTANA (TABLERO_ANCHO * TAM_BLOQUE)
 #define ALTO_VENTANA  (TABLERO_ALTO * TAM_BLOQUE)
@@ -31,17 +30,24 @@
 #define INDICE_NARANJA  6  // Marron/Naranja para la L
 #define INDICE_TRANSP   15
 
-#define DIMENSION_GENERAL 4 // TODAS las piezas ahora viven en una matriz de 4x4
 #define CANT_COLORES 16
+
+typedef struct {
+    uint8_t matriz[DIMENSION_PIEZA][DIMENSION_PIEZA];
+    int dimension;
+    int x;
+    int y;
+    uint8_t color;
+} t_tetromino;
 
 // 1. Declaramos que la paleta existe y tiene 16 elementos
 extern tGBT_ColorRGB paletaCGA[CANT_COLORES];
 
 void dibujar_cuadrado_base(uint16_t, uint16_t, const uint8_t [][TAM_BLOQUE]);
-void dibujar_pieza(int16_t f_col, int16_t f_fila, uint8_t[][DIMENSION_GENERAL], const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE]);
-void fijar_pieza(int16_t pos_columna, int16_t pos_fila, uint8_t pieza[][DIMENSION_GENERAL], uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
+void dibujar_pieza(t_tetromino *p, const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE]);
+void fijar_pieza(t_tetromino *p, uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
 void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE]);
-void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_GENERAL][DIMENSION_GENERAL], uint8_t pieza_destino[DIMENSION_GENERAL][DIMENSION_GENERAL]);
-void rotar_pieza(uint8_t pieza[DIMENSION_GENERAL][DIMENSION_GENERAL], int sentido);
+void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_PIEZA][DIMENSION_PIEZA], uint8_t pieza_destino[DIMENSION_PIEZA][DIMENSION_PIEZA]);
+void rotar_pieza(t_tetromino *p, int sentido);
 
 #endif // HEADER_H_INCLUDED
