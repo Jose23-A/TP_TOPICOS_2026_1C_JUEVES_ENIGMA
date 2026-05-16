@@ -129,80 +129,177 @@ void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_PIEZA][DIMENSION_PI
     }
 }
 
-void rotar_pieza(t_tetromino *p, int sentido)
+int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO])
 {
     if (p->dimension == 2)
-        return;
+        return 0;
 
-    uint8_t temporal[DIMENSION_PIEZA][DIMENSION_PIEZA]=
+    t_tetromino prueba = *p;
+
+    for (int i=0; i<DIMENSION_PIEZA; i++)
     {
-        {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
-        {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
-        {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP},
-        {INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP, INDICE_TRANSP}
-    };
-
-
-    for (int f = 0; f < DIMENSION_PIEZA; f++)
-    {
-        for (int f = 0; f < p->dimension; f++)
+        for (int j=0; j<DIMENSION_PIEZA; j++)
         {
-            for (int c = 0; c < p->dimension; c++)
+            prueba.matriz[i][j]=INDICE_TRANSP;
+        }
+    }
+
+
+    for (int f = 0; f < p->dimension; f++)
+    {
+        for (int c = 0; c < p->dimension; c++)
+        {
+            if (sentido == 1)
             {
-                if (sentido == 1)
-                {
-                    // Rotar a la DERECHA (Horario)
-                    temporal[c][p->dimension - 1 - f] = p->matriz[f][c];
-                }
-                else
-                {
-                    // Rotar a la IZQUIERDA (Antihorario)
-                    temporal[p->dimension - 1 - c][f] = p->matriz[f][c];
-                }
+                prueba.matriz[c][p->dimension - 1 - f] = p->matriz[f][c];
+            }
+            else
+            {
+                prueba.matriz[p->dimension - 1 - c][f] = p->matriz[f][c];
             }
         }
     }
 
-    // Finalmente, volcamos la matriz rotada de nuevo en nuestra pieza
+    if (es_posicion_valida(&prueba, tablero)) {
+        copiar_matriz(p->matriz, prueba.matriz);
+        return 1;
+    }
+
+    prueba.x++;
+    if (es_posicion_valida(&prueba, tablero)) {
+        copiar_matriz(p->matriz, prueba.matriz);
+        p->x = prueba.x;
+        return 1;
+    }
+
+    prueba.x -= 2;
+    if (es_posicion_valida(&prueba, tablero)) {
+        copiar_matriz(p->matriz, prueba.matriz);
+        p->x = prueba.x;
+        return 1;
+    }
+
+    // --- INTENTOS EXCLUSIVOS PARA LA PIEZA 'I' ---
+    if (p->dimension == 4)
+    {
+        prueba.x += 3;
+        if (es_posicion_valida(&prueba, tablero)) {
+            copiar_matriz(p->matriz, prueba.matriz);
+            p->x = prueba.x;
+            return;
+        }
+
+        prueba.x -= 4;
+        if (es_posicion_valida(&prueba, tablero)) {
+            copiar_matriz(p->matriz, prueba.matriz);
+            p->x = prueba.x;
+            return;
+        }
+    }
+
+    return 0;
+}
+
+int es_posicion_valida(t_tetromino *p, uint8_t tablero[][TABLERO_ANCHO])
+{
     for (int f = 0; f < DIMENSION_PIEZA; f++)
     {
         for (int c = 0; c < DIMENSION_PIEZA; c++)
         {
-            p->matriz[f][c] = temporal[f][c];
+
+            if (p->matriz[f][c] != INDICE_TRANSP)
+            {
+                int fila_real = p->y + f;
+                int col_real = p->x + c;
+
+                // 1. Paredes y piso
+                if (col_real < 0 || col_real >= TABLERO_ANCHO || fila_real >= TABLERO_ALTO)
+                {
+                    return 0;
+                }
+
+                // 2. Otras piezas (evitando leer basura arriba del tablero)
+                if (fila_real >= 0 && tablero[fila_real][col_real] != INDICE_TRANSP)
+                {
+                    return 0;
+                }
+            }
         }
     }
-}
-
-void rotar_tetromino(t_tetromino *p, int sentido)
-{
-
-    rotar_pieza(p->matriz, sentido);
+    return 1;
 }
 
 // Devuelve 1 si hay choque, 0 si hay camino libre
 int choca_abajo(t_tetromino *p, uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO])
 {
-    for (int f = 0; f < DIMENSION_PIEZA; f++) {
-        for (int c = 0; c < DIMENSION_PIEZA; c++) {
+    for (int f = 0; f < DIMENSION_PIEZA; f++)
+    {
+        for (int c = 0; c < DIMENSION_PIEZA; c++)
+        {
 
             // Solo nos interesan los bloques que tienen color (ignoramos el "aire")
-            if (p->matriz[f][c] != INDICE_TRANSP) {
+            if (p->matriz[f][c] != INDICE_TRANSP)
+            {
 
                 // Calculamos a dónde iría este bloque si cae una posición más (y + 1)
                 int futura_fila = p->y + f + 1;
                 int actual_col = p->x + c;
 
                 // 1. ¿Tocamos el piso del tablero?
-                if (futura_fila >= TABLERO_ALTO) {
+                if (futura_fila >= TABLERO_ALTO)
+                {
                     return 1; // ¡Choque!
                 }
 
                 // 2. ¿Tocamos otra pieza que ya estaba en el tablero?
-                if (tablero[futura_fila][actual_col] != INDICE_TRANSP) {
+                if (tablero[futura_fila][actual_col] != INDICE_TRANSP)
+                {
                     return 1; // ¡Choque!
                 }
             }
         }
     }
     return 0; // Todo libre, puede seguir cayendo
+}
+
+int choca_derecha (t_tetromino *p, uint8_t tablero[][TABLERO_ANCHO])
+{
+    int col_der, fila;
+    for(int j=DIMENSION_PIEZA-1; j>=0; j--)
+    {
+        for(int i=0; i<DIMENSION_PIEZA; i++)
+        {
+            col_der = p->x + j +1;
+            fila = p->y+i;
+
+            if(p->matriz[i][j] != INDICE_TRANSP && col_der > TABLERO_ANCHO - 1)
+                return SIN_MOV_DER;
+
+            if( p->matriz[i][j] != INDICE_TRANSP && tablero[fila][col_der] != INDICE_TRANSP)
+                return SIN_MOV_DER;
+        }
+    }
+
+    return CON_MOV_DER;
+}
+
+int choca_izquierda (t_tetromino *p, uint8_t tablero[][TABLERO_ANCHO])
+{
+    int col_izq, fila;
+    for(int j=0; j<DIMENSION_PIEZA; j++)
+    {
+        for(int i=0; i<DIMENSION_PIEZA; i++)
+        {
+            col_izq = p->x + j - 1;
+            fila = p->y+i;
+
+            if( p->matriz[i][j] != INDICE_TRANSP && col_izq < 0)
+                return SIN_MOV_IZQ;
+
+            if( p->matriz[i][j] != INDICE_TRANSP && tablero[fila][col_izq] != INDICE_TRANSP)
+                return SIN_MOV_IZQ;
+        }
+    }
+
+    return CON_MOV_IZQ;
 }

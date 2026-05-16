@@ -32,6 +32,12 @@
 
 #define CANT_COLORES 16
 
+#define SIN_MOV_DER 1
+#define CON_MOV_DER 0
+#define SIN_MOV_IZQ 1
+#define CON_MOV_IZQ 0
+
+
 typedef struct {
     uint8_t matriz[DIMENSION_PIEZA][DIMENSION_PIEZA];
     int dimension;
@@ -48,6 +54,7 @@ void dibujar_pieza(t_tetromino *p, const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE]
 void fijar_pieza(t_tetromino *p, uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
 void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE]);
 void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_PIEZA][DIMENSION_PIEZA], uint8_t pieza_destino[DIMENSION_PIEZA][DIMENSION_PIEZA]);
-void rotar_pieza(t_tetromino *p, int sentido);
+int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO]);
+void crear_pieza(t_tetromino *p);
 
 #endif // HEADER_H_INCLUDED

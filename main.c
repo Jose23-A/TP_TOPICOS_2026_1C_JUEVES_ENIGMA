@@ -80,39 +80,37 @@ int main(int argc, char* argv[])
             printf("Saliendo...\n");
         }
         // Dibujamos la pieza en sus coordenadas lógicas actuales
-        if(gbt_tecla_presionada(GBTK_IZQUIERDA) && pieza_activa.x > 0)
+        if(gbt_tecla_presionada(GBTK_IZQUIERDA) && !choca_izquierda(&pieza_activa, tablero_principal))
         {
             pieza_activa.x--;
         }
-        if(gbt_tecla_presionada(GBTK_DERECHA) && pieza_activa.x < 8)
+        if(gbt_tecla_presionada(GBTK_DERECHA) && !choca_derecha(&pieza_activa, tablero_principal))
         {
             pieza_activa.x++;
         }
         if(gbt_tecla_presionada(GBTK_q))
         {
-            printf("presionaste Q");
-            rotar_pieza(&pieza_activa, GIRO_Q); // Izquierda
+            rotar_pieza(&pieza_activa, GIRO_Q, tablero_principal); // Izquierda
         }
         if(gbt_tecla_presionada(GBTK_e))
         {
-            printf("presionaste E");
-            rotar_pieza(&pieza_activa, GIRO_E);  // Derecha
+            rotar_pieza(&pieza_activa, GIRO_E, tablero_principal);  // Derecha
         }
         // B. Actualización Lógica (La Gravedad) [cite: 5]
         // Si se cumplió el tiempo (0.5s), movemos la pieza hacia abajo.
         if (gbt_temporizador_consumir(temp_gravedad))   // [cite: 5]
         {
-/*
-            // Verificamos si tocamos el fondo lógico.
-            // (La pieza mide 2 bloques de alto, el tablero mide TABLERO_ALTO)
-            if (pieza_activa.y < TABLERO_ALTO - pieza_activa.dimension)
-                pieza_activa.y++;
-            else
-            {
-                fijar_pieza(&pieza_activa, tablero_principal);
-                crear_pieza(&pieza_activa);
-            }
-*/
+            /*
+                        // Verificamos si tocamos el fondo lógico.
+                        // (La pieza mide 2 bloques de alto, el tablero mide TABLERO_ALTO)
+                        if (pieza_activa.y < TABLERO_ALTO - pieza_activa.dimension)
+                            pieza_activa.y++;
+                        else
+                        {
+                            fijar_pieza(&pieza_activa, tablero_principal);
+                            crear_pieza(&pieza_activa);
+                        }
+            */
             if (choca_abajo(&pieza_activa, tablero_principal) == 0)
             {
                 // CAMINO LIBRE: La pieza baja una fila en el mundo lógico
