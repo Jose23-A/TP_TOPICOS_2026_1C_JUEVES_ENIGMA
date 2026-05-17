@@ -6,18 +6,6 @@
 #include "header.h"
 //#include "matrices.h"
 
-const uint8_t textura_magenta[TAM_BLOQUE][TAM_BLOQUE] =
-{
-    {7, 7, 7, 7, 7, 7, 7, 0},
-    {7, 5, 5, 5, 5, 5, 8, 0},
-    {7, 5, 5, 5, 5, 5, 8, 0},
-    {7, 5, 5, 5, 5, 5, 8, 0},
-    {7, 5, 5, 5, 5, 5, 8, 0},
-    {7, 5, 5, 5, 5, 5, 8, 0},
-    {7, 8, 8, 8, 8, 8, 8, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0}
-};
-
 int main(int argc, char* argv[])
 {
 
@@ -100,17 +88,7 @@ int main(int argc, char* argv[])
         // Si se cumplió el tiempo (0.5s), movemos la pieza hacia abajo.
         if (gbt_temporizador_consumir(temp_gravedad))   // [cite: 5]
         {
-            /*
-                        // Verificamos si tocamos el fondo lógico.
-                        // (La pieza mide 2 bloques de alto, el tablero mide TABLERO_ALTO)
-                        if (pieza_activa.y < TABLERO_ALTO - pieza_activa.dimension)
-                            pieza_activa.y++;
-                        else
-                        {
-                            fijar_pieza(&pieza_activa, tablero_principal);
-                            crear_pieza(&pieza_activa);
-                        }
-            */
+
             if (choca_abajo(&pieza_activa, tablero_principal) == 0)
             {
                 // CAMINO LIBRE: La pieza baja una fila en el mundo lógico
@@ -129,13 +107,12 @@ int main(int argc, char* argv[])
         }
 
         gbt_borrar_backbuffer(INDICE_NEGRO); // Limpiar pantalla en negro
-        dibujar_tablero(tablero_principal, textura_magenta);
-        dibujar_pieza(&pieza_activa, textura_magenta);
-        gbt_volcar_backbuffer(); // Mostrar el frame dibujado
+        dibujar_tablero(tablero_principal);
+        dibujar_pieza(&pieza_activa);
+        gbt_volcar_backbuffer();
         gbt_esperar(16);
     }
 
-    // Limpieza final
     gbt_temporizador_destruir(temp_gravedad);
     gbt_destruir_ventana();
     gbt_cerrar();

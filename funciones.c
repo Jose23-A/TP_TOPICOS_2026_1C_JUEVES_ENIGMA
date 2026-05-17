@@ -22,54 +22,66 @@ void crear_pieza(t_tetromino *p)
     // 1:I, 2:O, 3:T, 4:S, 5:Z, 6:J, 7:L
     switch(tipo_aleatorio)
     {
-    case 1: // I
+    case I:
         p->dimension = 4;
         copiar_matriz(p->matriz, pieza_I);
+        p->color = INDICE_CIAN;
         break;
-    case 2: // O
+    case O:
         p->dimension = 2;
         copiar_matriz(p->matriz, pieza_O);
+        p->color = INDICE_AMARILLO;
         break;
-    case 3: // T
+    case T:
         p->dimension = 3;
         copiar_matriz(p->matriz, pieza_T);
+        p->color = INDICE_MAGENTA;
         break;
-    case 4: // S
+    case S:
         p->dimension = 3;
         copiar_matriz(p->matriz, pieza_T);
+        p->color = INDICE_VERDE_C;
         break;
-    case 5: // Z
+    case Z:
         p->dimension = 3;
         copiar_matriz(p->matriz, pieza_Z);
+        p->color = INDICE_ROJO_C;
         break;
-    case 6: // J
+    case J:
         p->dimension = 3;
         copiar_matriz(p->matriz, pieza_J);
+        p->color = INDICE_AZUL_C;
         break;
-    case 7: // L
+    case L:
         p->dimension = 3;
         copiar_matriz(p->matriz, pieza_L);
+        p->color = INDICE_NARANJA;
     default: // Por defecto cargamos una T para no romper nada
-        p->dimension = 3;
-        copiar_matriz(p->matriz, pieza_T);
+        //p->dimension = 3;
+        //copiar_matriz(p->matriz, pieza_T);
+        //p->color = INDICE_VERDE_C;
         break;
     }
 }
 
-void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE])
+//Pinta el cuadrado del tetromino
+void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t color_pieza)
 {
     for (int y = 0; y < TAM_BLOQUE; y++)
     {
         for (int x = 0; x < TAM_BLOQUE; x++)
         {
-            uint8_t color_pixel = textura[y][x];
+            uint8_t color_pixel = textura_molde[y][x];
+
+            if (color_pixel == INDICE_RELLENO)
+                color_pixel = color_pieza;
 
             gbt_dibujar_pixel(x_pantalla + x, y_pantalla + y, color_pixel);
         }
     }
 }
 
-void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE])
+void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO])
 {
     for (int fila = 0; fila < TABLERO_ALTO; fila++)
     {
@@ -79,13 +91,13 @@ void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], const u
             {
                 int pixel_x = col * TAM_BLOQUE;
                 int pixel_y = fila * TAM_BLOQUE;
-                dibujar_cuadrado_base(pixel_x, pixel_y, textura);
+                dibujar_cuadrado_base(pixel_x, pixel_y, tablero[fila][col]);
             }
         }
     }
 }
 
-void dibujar_pieza(t_tetromino *p, const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE])
+void dibujar_pieza(t_tetromino *p)
 {
     int pixel_x, pixel_y;
 
@@ -98,7 +110,7 @@ void dibujar_pieza(t_tetromino *p, const uint8_t textura[TAM_BLOQUE][TAM_BLOQUE]
                 pixel_x = (p->x + col) * TAM_BLOQUE;
                 pixel_y = (p->y + fila) * TAM_BLOQUE;
 
-                dibujar_cuadrado_base(pixel_x, pixel_y, textura);
+                dibujar_cuadrado_base(pixel_x, pixel_y, p->matriz[fila][col]);
             }
         }
     }
