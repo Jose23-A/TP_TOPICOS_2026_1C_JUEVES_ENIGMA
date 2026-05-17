@@ -8,25 +8,43 @@
 
 int main(int argc, char* argv[])
 {
+    // Resolucion por defecto
 
-    // 1. Inicializar la biblioteca [cite: 1]
+    int res_ancho = RES_ANCHO_CGA;
+    int res_alto = RES_ALTO_CGA;
+    int escala = ESCALA_VENTANA;
+
+    if (argc >= 3)
+    {
+        if (strcmp(argv[1], "VGA") == 0)
+        {
+            res_ancho = RES_ANCHO_VGA;
+            res_alto = RES_ALTO_VGA;
+        }
+        else if (strcmp(argv[1], "CGA") == 0)
+        {
+            res_ancho = RES_ANCHO_CGA;
+            res_alto = RES_ALTO_CGA;
+        }
+        escala = atoi(argv[2]);
+    }
+
     if (gbt_iniciar() != 0)
     {
         fprintf(stderr, "Error al iniciar GBT.\n");
         return -1;
     }
 
-    // 2. Crear la ventana con el tamaño lógico calculado [cite: 3]
-    if (gbt_crear_ventana("Ficha Cayendo (Gravedad)", ANCHO_VENTANA, ALTO_VENTANA, ESCALA_VENTANA) != 0)
+    if (gbt_crear_ventana("Ficha Cayendo (Gravedad)", res_ancho, res_alto, escala) != 0)
     {
         fprintf(stderr, "Error al crear la ventana.\n");
         gbt_cerrar(); // [cite: 1]
         return -1;
     }
 
-    gbt_aplicar_paleta(paletaCGA, 16, GBT_FORMATO_888); // [cite: 3, 9]
+    gbt_aplicar_paleta(paletaCGA, 16, GBT_FORMATO_888);
 
-    // 3. Temporizador para la gravedad: Cae cada 0.5 segundos [cite: 5]
+    // Temporizador para la gravedad: Cae cada 0.5 segundos
     tGBT_Temporizador* temp_gravedad = gbt_temporizador_crear(0.5);
     if (!temp_gravedad)
     {
@@ -46,13 +64,15 @@ int main(int argc, char* argv[])
 
     srand(time(NULL));
 
-    // Posición lógica inicial (ajustada para el ancho 4)
-    int16_t ficha_columna = (TABLERO_ANCHO / 2) - 2;
-    int16_t ficha_fila = 0;
-
     int corriendo = 1;
     printf("Programa iniciado. Ficha cayendo por gravedad.\n");
     printf("Pulse ESCAPE para salir.\n");
+
+    int tablero_ancho_px = TABLERO_ANCHO * TAM_BLOQUE;
+    int tablero_alto_px = TABLERO_ALTO * TAM_BLOQUE;
+
+    int offset_x = (res_ancho - tablero_ancho_px) / 2;
+    int offset_y = (res_alto - tablero_alto_px) / 2;
 
     t_tetromino pieza_activa;
     crear_pieza(&pieza_activa);
@@ -84,31 +104,31 @@ int main(int argc, char* argv[])
         {
             rotar_pieza(&pieza_activa, GIRO_E, tablero_principal);  // Derecha
         }
-        // B. Actualización Lógica (La Gravedad) [cite: 5]
+        // Actualización Lógica (La Gravedad)
         // Si se cumplió el tiempo (0.5s), movemos la pieza hacia abajo.
         if (gbt_temporizador_consumir(temp_gravedad))   // [cite: 5]
         {
 
             if (choca_abajo(&pieza_activa, tablero_principal) == 0)
             {
-                // CAMINO LIBRE: La pieza baja una fila en el mundo lógico
+                // La pieza baja una fila
                 pieza_activa.y++;
             }
             else
             {
-                // BLOQUEADO: La pieza tocó el fondo o algo más
-                // 1. La dejamos "pintada" permanentemente en el tablero
+                // La pieza tocó el fondo o algo más
+                // La dejamos "pintada" permanentemente en el tablero
                 fijar_pieza(&pieza_activa, tablero_principal);
 
-                // 2. Pedimos una nueva pieza al azar para que aparezca arriba
+                // Pedimos una nueva pieza al azar para que aparezca arriba
                 crear_pieza(&pieza_activa);
             }
 
         }
 
         gbt_borrar_backbuffer(INDICE_NEGRO); // Limpiar pantalla en negro
-        dibujar_tablero(tablero_principal);
-        dibujar_pieza(&pieza_activa);
+        dibujar_tablero(tablero_principal, offset_x, offset_y);
+        dibujar_pieza(&pieza_activa, offset_x, offset_y);
         gbt_volcar_backbuffer();
         gbt_esperar(16);
     }

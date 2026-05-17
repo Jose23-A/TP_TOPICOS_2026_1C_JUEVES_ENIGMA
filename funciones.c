@@ -81,7 +81,7 @@ void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t col
     }
 }
 
-void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO])
+void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], int offset_x, int offset_y)
 {
     for (int fila = 0; fila < TABLERO_ALTO; fila++)
     {
@@ -89,15 +89,16 @@ void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO])
         {
             if (tablero[fila][col] != INDICE_TRANSP)
             {
-                int pixel_x = col * TAM_BLOQUE;
-                int pixel_y = fila * TAM_BLOQUE;
+                int pixel_x = offset_x + col * TAM_BLOQUE;
+                int pixel_y = offset_y + fila * TAM_BLOQUE;
+
                 dibujar_cuadrado_base(pixel_x, pixel_y, tablero[fila][col]);
             }
         }
     }
 }
 
-void dibujar_pieza(t_tetromino *p)
+void dibujar_pieza(t_tetromino *p, int offset_x, int offset_y)
 {
     int pixel_x, pixel_y;
 
@@ -107,8 +108,8 @@ void dibujar_pieza(t_tetromino *p)
         {
             if (p->matriz[fila][col] != INDICE_TRANSP)
             {
-                pixel_x = (p->x + col) * TAM_BLOQUE;
-                pixel_y = (p->y + fila) * TAM_BLOQUE;
+                pixel_x = offset_x + (p->x + col) * TAM_BLOQUE;
+                pixel_y = offset_y + (p->y + fila) * TAM_BLOQUE;
 
                 dibujar_cuadrado_base(pixel_x, pixel_y, p->matriz[fila][col]);
             }

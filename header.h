@@ -10,6 +10,12 @@
 #define TABLERO_ALTO 20
 #define CENTRO_TABLERO (TABLERO_ANCHO / 2) - 2
 
+#define RES_ANCHO_CGA 320
+#define RES_ALTO_CGA  200
+
+#define RES_ANCHO_VGA 640
+#define RES_ALTO_VGA 480
+
 #define ANCHO_VENTANA (TABLERO_ANCHO * TAM_BLOQUE)
 #define ALTO_VENTANA  (TABLERO_ALTO * TAM_BLOQUE)
 #define ESCALA_VENTANA 3
@@ -61,9 +67,9 @@ typedef struct {
 extern tGBT_ColorRGB paletaCGA[CANT_COLORES];
 
 void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t color_pieza);
-void dibujar_pieza(t_tetromino *p);
+void dibujar_pieza(t_tetromino *p, int offset_x, int offset_y);
 void fijar_pieza(t_tetromino *p, uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
-void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
+void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], int offset_x, int offset_y);
 void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_PIEZA][DIMENSION_PIEZA], uint8_t pieza_destino[DIMENSION_PIEZA][DIMENSION_PIEZA]);
 int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO]);
 void crear_pieza(t_tetromino *p);
