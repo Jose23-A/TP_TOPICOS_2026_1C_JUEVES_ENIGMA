@@ -1,14 +1,15 @@
 # depslib dependency file v1.0
-1779030802 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\main.c
+1779071457 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\main.c
 	"header.h"
 
-1779030679 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\header.h
+1779073818 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\header.h
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
 	<time.h>
 	"GBT/gbt.h"
 
-1779030646 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\funciones.c
+1779073261 source:e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\funciones.c
 	"header.h"
 	"matrices.h"
 
@@ -34,5 +35,5 @@
 	<stdlib.h>
 	<stdint.h>
 
-1778985682 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\matrices.h
+1779069591 e:\ingenieria\topicos_de_programacion\tps\tp_topicos_2026_1c_jueves_enigma\matrices.h
 

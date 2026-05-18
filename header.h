@@ -3,12 +3,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "GBT/gbt.h"
 
 #define TABLERO_ANCHO 10
 #define TABLERO_ALTO 20
 #define CENTRO_TABLERO (TABLERO_ANCHO / 2) - 2
+#define MITAD 2
 
 #define RES_ANCHO_CGA 320
 #define RES_ALTO_CGA  200
@@ -54,6 +56,14 @@
 #define SIN_MOV_IZQ 1
 #define CON_MOV_IZQ 0
 
+// --- ESTADOS DEL JUEGO ---
+#define ESTADO_MENU      0
+#define ESTADO_JUGANDO   1
+#define ESTADO_PAUSA     2
+#define ESTADO_GAMEOVER  3
+
+#define SLAM_DUNK_HEIGHT 104
+#define SLAM_DUNK_WIDTH 270
 
 typedef struct {
     uint8_t matriz[DIMENSION_PIEZA][DIMENSION_PIEZA];
@@ -62,6 +72,11 @@ typedef struct {
     int y;
     uint8_t color;
 } t_tetromino;
+
+typedef struct{
+    char nombre[11];
+    int puntaje;
+} t_jugador;
 
 // 1. Declaramos que la paleta existe y tiene 16 elementos
 extern tGBT_ColorRGB paletaCGA[CANT_COLORES];
@@ -73,5 +88,7 @@ void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], int off
 void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_PIEZA][DIMENSION_PIEZA], uint8_t pieza_destino[DIMENSION_PIEZA][DIMENSION_PIEZA]);
 int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO]);
 void crear_pieza(t_tetromino *p);
+int limpiar_lineas(uint8_t [][TABLERO_ANCHO]);
+void dibujar_marco_tablero(int offset_x, int offset_y, uint8_t color_marco);
 
 #endif // HEADER_H_INCLUDED
