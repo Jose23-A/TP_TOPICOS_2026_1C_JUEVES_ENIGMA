@@ -64,14 +64,19 @@ void crear_pieza(t_tetromino *p)
     }
 }
 
-//Pinta el cuadrado del tetromino
-void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t color_pieza)
+// Pinta el cuadrado del tetromino
+void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t color_pieza, int paleta_tipo)
 {
     for (int y = 0; y < TAM_BLOQUE; y++)
     {
         for (int x = 0; x < TAM_BLOQUE; x++)
         {
             uint8_t color_pixel = textura_molde[y][x];
+
+            if (paleta_tipo == 0)
+                color_pixel = textura_molde[y][x];
+            else
+                color_pixel = textura_retro[y][x];
 
             if (color_pixel == INDICE_RELLENO)
                 color_pixel = color_pieza;
@@ -81,26 +86,26 @@ void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t col
     }
 }
 
-void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], int offset_x, int offset_y)
+void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], int offset_x, int offset_y, int paleta_tipo)
 {
-    for (int fila = 0; fila < TABLERO_ALTO; fila++)
+    for (int fila = FILAS_INVISIBLES; fila < TABLERO_ALTO; fila++)
     {
         for (int col = 0; col < TABLERO_ANCHO; col++)
         {
             if (tablero[fila][col] != INDICE_TRANSP)
             {
                 int pixel_x = offset_x + col * TAM_BLOQUE;
-                int pixel_y = offset_y + fila * TAM_BLOQUE;
+                int pixel_y = offset_y + (fila - FILAS_INVISIBLES) * TAM_BLOQUE;
 
-                dibujar_cuadrado_base(pixel_x, pixel_y, tablero[fila][col]);
+                dibujar_cuadrado_base(pixel_x, pixel_y, tablero[fila][col], paleta_tipo);
             }
         }
     }
 }
 
-void dibujar_pieza(t_tetromino *p, int offset_x, int offset_y)
+void dibujar_pieza(t_tetromino *p, int offset_x, int offset_y, int paleta_tipo)
 {
-    int pixel_x, pixel_y;
+    int pixel_x, pixel_y, fila_real;
 
     for (int fila = 0; fila < DIMENSION_PIEZA; fila++)
     {
@@ -108,10 +113,15 @@ void dibujar_pieza(t_tetromino *p, int offset_x, int offset_y)
         {
             if (p->matriz[fila][col] != INDICE_TRANSP)
             {
-                pixel_x = offset_x + (p->x + col) * TAM_BLOQUE;
-                pixel_y = offset_y + (p->y + fila) * TAM_BLOQUE;
+                fila_real = p->y + fila;
 
-                dibujar_cuadrado_base(pixel_x, pixel_y, p->matriz[fila][col]);
+                if(fila_real >= FILAS_INVISIBLES)
+                {
+                    pixel_x = offset_x + (p->x + col) * TAM_BLOQUE;
+                    pixel_y = offset_y + (fila_real - FILAS_INVISIBLES) * TAM_BLOQUE;
+
+                    dibujar_cuadrado_base(pixel_x, pixel_y, p->matriz[fila][col], paleta_tipo);
+                }
             }
         }
     }
@@ -173,20 +183,23 @@ int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO])
         }
     }
 
-    if (es_posicion_valida(&prueba, tablero)) {
+    if (es_posicion_valida(&prueba, tablero))
+    {
         copiar_matriz(p->matriz, prueba.matriz);
         return 1;
     }
 
     prueba.x++;
-    if (es_posicion_valida(&prueba, tablero)) {
+    if (es_posicion_valida(&prueba, tablero))
+    {
         copiar_matriz(p->matriz, prueba.matriz);
         p->x = prueba.x;
         return 1;
     }
 
     prueba.x -= 2;
-    if (es_posicion_valida(&prueba, tablero)) {
+    if (es_posicion_valida(&prueba, tablero))
+    {
         copiar_matriz(p->matriz, prueba.matriz);
         p->x = prueba.x;
         return 1;
@@ -196,14 +209,16 @@ int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO])
     if (p->dimension == 4)
     {
         prueba.x += 3;
-        if (es_posicion_valida(&prueba, tablero)) {
+        if (es_posicion_valida(&prueba, tablero))
+        {
             copiar_matriz(p->matriz, prueba.matriz);
             p->x = prueba.x;
             return 1;
         }
 
         prueba.x -= 4;
-        if (es_posicion_valida(&prueba, tablero)) {
+        if (es_posicion_valida(&prueba, tablero))
+        {
             copiar_matriz(p->matriz, prueba.matriz);
             p->x = prueba.x;
             return 1;
@@ -366,25 +381,38 @@ int limpiar_lineas(uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO])
 
 void dibujar_marco_tablero(int offset_x, int offset_y, uint8_t color_marco)
 {
-    // 1. Dibujamos las paredes izquierda y derecha
-    for (int fila = 0; fila < TABLERO_ALTO; fila++)
+    int alto_visual = TABLERO_ALTO - FILAS_INVISIBLES;
+    // 1. Dibujamos las paredes izquierda y derecha con los mini tableros
+    for (int fila = 0; fila < alto_visual; fila++)
     {
         int pixel_y = offset_y + (fila * TAM_BLOQUE);
 
-        // Bloque pegado a la izquierda (un bloque antes del inicio del tablero)
-        dibujar_cuadrado_base(offset_x - TAM_BLOQUE, pixel_y, color_marco);
+        // Bloque pegado a la izquierda
+        dibujar_bloque_marco_basket(offset_x - TAM_BLOQUE, pixel_y);
 
-        // Bloque pegado a la derecha (justo donde termina el ancho del tablero)
-        dibujar_cuadrado_base(offset_x + (TABLERO_ANCHO * TAM_BLOQUE), pixel_y, color_marco);
+        // Bloque pegado a la derecha
+        dibujar_bloque_marco_basket(offset_x + (TABLERO_ANCHO * TAM_BLOQUE), pixel_y);
     }
 
-    // 2. Dibujamos el piso (va desde la esquina izquierda a la derecha)
+    // 2. Dibujamos el piso con los mini tableros
     for (int col = -1; col <= TABLERO_ANCHO; col++)
     {
         int pixel_x = offset_x + (col * TAM_BLOQUE);
-        int pixel_y = offset_y + (TABLERO_ALTO * TAM_BLOQUE);
+        int pixel_y = offset_y + (alto_visual * TAM_BLOQUE);
 
-        dibujar_cuadrado_base(pixel_x, pixel_y, color_marco);
+        dibujar_bloque_marco_basket(pixel_x, pixel_y);
+    }
+}
+
+void dibujar_bloque_marco_basket(uint16_t x_pantalla, uint16_t y_pantalla)
+{
+    for (int y = 0; y < TAM_BLOQUE; y++)
+    {
+        for (int x = 0; x < TAM_BLOQUE; x++)
+        {
+            uint8_t color_pixel = marco_basket[y][x];
+            gbt_dibujar_pixel(x_pantalla + x, y_pantalla + y, color_pixel);
+        }
     }
 }
 
@@ -470,76 +498,69 @@ void mi_gbt_dibujar_texto(int x_pantalla, int y_pantalla, const char* texto, uin
         pos_x += 9;
     }
 }
-// Esta función convierte un color hexadecimal arbitrario de la matriz
-// al color CGA de 16 colores más cercano de tu paleta.
-// Esta función convierte un color hexadecimal arbitrario de la matriz
-// al color CGA de 16 colores más cercano de tu paleta.
-// ESTA VERSIÓN REFINADA ELIMINA EL RUIDO Y PECAS DE LA PIEL.
-/*
+
 uint8_t mapear_color_cga(uint8_t color_orig)
 {
     switch(color_orig)
     {
-        // Negros y sombras profundas (Pelo de Rukawa y bordes)
-        case 0x00: case 0x20: case 0x24: case 0x40: case 0x44: case 0x49:
-            return 0; // CGA Negro
+    case 0x00:
+    case 0x20:
+    case 0x24:
+    case 0x40:
+    case 0x44:
+    case 0x49:
+        return 0; // Al Negro puro
 
-        // Grises oscuros / Sombras secundarias
-        case 0x60: case 0x64: case 0x65: case 0x68: case 0x69:
-            return 8; // CGA Gris Oscuro
+    case 0x60:
+    case 0x64:
+    case 0x65:
+    case 0x68:
+    case 0x69:
+        return 1; // Al Gris azulado (sombras)
 
-        // Tonos de piel oscuros (Cuellos y sombras de las caras)
-        case 0x8d: case 0x8e: case 0x91: case 0x92:
-            return 7; // CGA Marrón / Dark Yellow (ideal para piel oscura)
+    case 0x8d:
+    case 0x8e:
+    case 0x91:
+    case 0x92:
+        return 2; // A Piel oscura
 
-        // --- SECCIÓN REFINADA PARA ELIMINAR PECAS ---
-        // Tonos de piel medios y medios-claros. Consolidamos un rango mayor
-        // para unificar la piel y eliminar las pecas amarillas/naranjas.
-        // Agregamos tonos que podrían estar creando ruido (ej: 0xd2, 0xd6).
-        case 0xad: case 0xae: case 0xb1: case 0xb2: case 0xb6:
-        case 0xd2: case 0xd6: case 0xf2: case 0xf6: case 0xfb:
-            return 7; // CGA Gris Claro (piel beige lisa, sin speckles)
+    case 0xad:
+    case 0xae:
+    case 0xb1:
+    case 0xb2:
+    case 0xb6:
+    case 0xd2:
+    case 0xd6:
+    case 0xf2:
+    case 0xf6:
+    case 0xfb:
+        return 3; // A Piel media/clara lisa (mata las pecas)
 
-        // Rojos oscuros (Camisetas y sombras del pelo)
-        case 0x80: case 0x84: case 0x85: case 0x89:
-            return 4; // CGA Rojo
+    case 0x80:
+    case 0x84:
+    case 0x85:
+    case 0x89:
+        return 5; // A Rojo oscuro
 
-        // Rojos brillantes (¡El pelo de Hanamichi!)
-        case 0xa4: case 0xa9: case 0xc4: case 0xc5: case 0xc8: case 0xc9: case 0xcd: case 0xe4: case 0xe5: case 0xe8: case 0xe9: case 0xed:
-            return 12; // CGA Rojo Claro
+    case 0xa4:
+    case 0xa9:
+    case 0xc4:
+    case 0xc5:
+    case 0xc8:
+    case 0xc9:
+    case 0xcd:
+    case 0xe4:
+    case 0xe5:
+    case 0xe8:
+    case 0xe9:
+    case 0xed:
+        return 6; // A Rojo vivo (Hanamichi)
 
-        default:
-            return 7; // Si se nos escapó algún color raro de la piel, lo pintamos de gris piel
+    default:
+        return 7; // Fondo / Gris claro
     }
 }
-*/
-uint8_t mapear_color_cga(uint8_t color_orig)
-{
-    switch(color_orig)
-    {
-        case 0x00: case 0x20: case 0x24: case 0x40: case 0x44: case 0x49:
-            return 0; // Al Negro puro
 
-        case 0x60: case 0x64: case 0x65: case 0x68: case 0x69:
-            return 1; // Al Gris azulado (sombras)
-
-        case 0x8d: case 0x8e: case 0x91: case 0x92:
-            return 2; // A Piel oscura
-
-        case 0xad: case 0xae: case 0xb1: case 0xb2: case 0xb6:
-        case 0xd2: case 0xd6: case 0xf2: case 0xf6: case 0xfb:
-            return 3; // A Piel media/clara lisa (mata las pecas)
-
-        case 0x80: case 0x84: case 0x85: case 0x89:
-            return 5; // A Rojo oscuro
-
-        case 0xa4: case 0xa9: case 0xc4: case 0xc5: case 0xc8: case 0xc9: case 0xcd: case 0xe4: case 0xe5: case 0xe8: case 0xe9: case 0xed:
-            return 6; // A Rojo vivo (Hanamichi)
-
-        default:
-            return 7; // Fondo / Gris claro
-    }
-}
 void dibujar_slamdunk(int x_inicial, int y_inicial)
 {
     long indice = 0;
@@ -553,10 +574,10 @@ void dibujar_slamdunk(int x_inicial, int y_inicial)
             // Si el pixel no es el fondo (suponiendo que 0xFF es el fondo blanco de la foto)
 
 
-                // Pasamos el color hexadecimal raro por nuestro traductor CGA
-                uint8_t color_cga = mapear_color_cga(color_original);
+            // Pasamos el color hexadecimal raro por nuestro traductor CGA
+            uint8_t color_cga = mapear_color_cga(color_original);
 
-                gbt_dibujar_pixel(x_inicial + x, y_inicial + y, color_cga);
+            gbt_dibujar_pixel(x_inicial + x, y_inicial + y, color_cga);
 
 
             indice++;
@@ -564,25 +585,127 @@ void dibujar_slamdunk(int x_inicial, int y_inicial)
     }
 }
 
-int guardar_puntaje(t_jugador *jugador)
+void guardar_puntaje(t_jugador *nuevo_jugador)
 {
-    t_jugador guardado;
-    FILE *fp = fopen("puntaje.dat", "ab");
+    t_jugador lista[MAX_JUGADORES];
+    int cantidad = 0;
+    int encontrado = 0;
 
-    if(fp == NULL)
+    // 1. LEER TODOS LOS JUGADORES DEL DISCO
+    FILE *fp = fopen("puntaje.dat", "rb");
+    if (fp != NULL)
     {
-        printf("Error al guardar puntaje\n");
-        return -1;
+        while (cantidad < MAX_JUGADORES && fread(&lista[cantidad], sizeof(t_jugador), 1, fp) == 1)
+        {
+            // Si el jugador ya existe en la base de datos
+            if (strcmpi(lista[cantidad].nombre, nuevo_jugador->nombre) == 0)
+            {
+                encontrado = 1;
+                // Actualizamos su estadística SOLO si rompió su propio récord
+                if (nuevo_jugador->puntaje > lista[cantidad].puntaje)
+                {
+                    lista[cantidad].puntaje = nuevo_jugador->puntaje;
+                }
+            }
+            cantidad++;
+        }
+        fclose(fp);
     }
 
-    fread(&guardado, sizeof(t_jugador), 1, fp);
-    while(!feof(fp) && jugador->puntaje > guardado.puntaje && strcmpi(jugador->nombre, guardado.nombre)==0)
+    // 2. SI ES UN JUGADOR NUEVO, LO AGREGAMOS
+    if (encontrado == 0 && cantidad < MAX_JUGADORES)
     {
-
-        fread(jugador, sizeof(jugador), 1, fp);
+        lista[cantidad] = *nuevo_jugador;
+        cantidad++;
     }
 
-        fwrite(jugador, sizeof(t_jugador), 1, fp);
+    // 3. ORDENAR EL RANKING DE MAYOR A MENOR (Método Burbuja)
+    for (int i = 0; i < cantidad - 1; i++)
+    {
+        for (int j = 0; j < cantidad - i - 1; j++)
+        {
+            if (lista[j].puntaje < lista[j + 1].puntaje)
+            {
+                t_jugador aux = lista[j];
+                lista[j] = lista[j + 1];
+                lista[j + 1] = aux;
+            }
+        }
+    }
 
-    fclose(fp);
+    // 4. GUARDAR TODO EL RANKING ORDENADO EN DISCO
+    fp = fopen("puntaje.dat", "wb");
+    if (fp != NULL)
+    {
+        for (int i = 0; i < cantidad; i++)
+        {
+            fwrite(&lista[i], sizeof(t_jugador), 1, fp);
+        }
+        fclose(fp);
+    }
 }
+
+void dibujar_caracter_8x16(int x_pantalla, int y_pantalla, char caracter, uint8_t color)
+{
+    if (caracter == ' ') return;
+
+    const uint8_t *bits = NULL;
+
+    // 1. Enrutamiento por Jump Table para números
+    if (caracter >= '0' && caracter <= '9')
+    {
+        int indice = caracter - '0';
+        for (int y = 0; y < 16; y++)
+        {
+            uint8_t fila = fuente_numeros_16[indice][y];
+            for (int x = 0; x < 8; x++)
+            {
+                if ((fila & (0x80 >> x)) != 0)
+                    gbt_dibujar_pixel(x_pantalla + x, y_pantalla + y, color);
+            }
+        }
+        return; // Salida temprana por optimización
+    }
+
+    // 2. Enrutamiento explícito para las letras utilizadas en la UI
+    switch (caracter)
+    {
+        case 'A': bits = FONT16_A; break;
+        case 'C': bits = FONT16_C; break;
+        case 'E': bits = FONT16_E; break;
+        case 'G': bits = FONT16_G; break;
+        case 'M': bits = FONT16_M; break;
+        case 'O': bits = FONT16_O; break;
+        case 'P': bits = FONT16_P; break;
+        case 'R': bits = FONT16_R; break;
+        case 'S': bits = FONT16_S; break;
+        case 'U': bits = FONT16_U; break;
+        case 'V': bits = FONT16_V; break;
+        default: return; // Si la letra no se usa, el motor gráfico la ignora de forma segura
+    }
+
+    // 3. Renderizado Bitwise de la letra seleccionada
+    for (int y = 0; y < 16; y++)
+    {
+        uint8_t fila = bits[y];
+        for (int x = 0; x < 8; x++)
+        {
+            if ((fila & (0x80 >> x)) != 0)
+                gbt_dibujar_pixel(x_pantalla + x, y_pantalla + y, color);
+        }
+    }
+}
+
+// Nueva función enrutadora para textos grandes
+void mi_gbt_dibujar_texto_16(int x_pantalla, int y_pantalla, const char* texto, uint8_t color)
+{
+    int pos_x = x_pantalla;
+    for (int i = 0; texto[i] != '\0'; i++)
+    {
+        dibujar_caracter_8x16(pos_x, y_pantalla, texto[i], color);
+        pos_x += 9; // El ancho sigue siendo 8px + 1 de margen
+    }
+}
+
+
+
