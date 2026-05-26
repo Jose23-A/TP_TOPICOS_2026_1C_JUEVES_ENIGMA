@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 
             case ESTADO_JUGANDO:
 
-                gbt_borrar_backbuffer(INDICE_GRIS_CL);
+                dibujar_cancha_fondo(sys.res_ancho, sys.res_alto, dt.offset_x, dt.offset_y, dt.tablero_ancho_px, sys.paleta_tipo);
 
                 movimientosPiezas(&dt);
 
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 
             case ESTADO_PAUSA:
 
-                gbt_borrar_backbuffer(INDICE_GRIS_CL);
+                dibujar_cancha_fondo(sys.res_ancho, sys.res_alto, dt.offset_x, dt.offset_y, dt.tablero_ancho_px, sys.paleta_tipo);
 
                 controlar_menu_pausa(&sys, &dt, &player);
 

@@ -203,29 +203,7 @@ const uint8_t fuente_numeros[10][8] = {
         0b00000000
     }
 };
-/*
-tGBT_ColorRGB paletaCGA[CANT_COLORES] =
-{
 
-    /// 0-15: Colores CGA (16 colores)
-    {0x00, 0x00, 0x00}, // 0:   Negro
-    {0x00, 0x00, 0xAA}, // 1:   Azul
-    {0x00, 0xAA, 0x00}, // 2:   Verde
-    {0x00, 0xAA, 0xAA}, // 3:   Cian
-    {0xAA, 0x00, 0x00}, // 4:   Rojo
-    {0xAA, 0x00, 0xAA}, // 5:   Magenta
-    {0xAA, 0x55, 0x00}, // 6:   Marron
-    {0xAA, 0xAA, 0xAA}, // 7:   Gris claro
-    {0x55, 0x55, 0x55}, // 8:   Gris oscuro
-    {0x55, 0x55, 0xFF}, // 9:   Azul brillante
-    {0x55, 0xFF, 0x55}, // 10:  Verde brillante
-    {0x55, 0xFF, 0xFF}, // 11:  Cian brillante
-    {0xFF, 0x55, 0x55}, // 12:  Rojo brillante
-    {0xFF, 0x55, 0xFF}, // 13:  Magenta brillante
-    {0xFF, 0xFF, 0x55}, // 14:  Amarillo
-    {0xFF, 0xFF, 0xFF}  // 15:  Usado como transparente por GBT
-};
-*/
 tGBT_ColorRGB paletaCGA[CANT_COLORES] =
 {
     /// COLORES PERSONALIZADOS PARA EL MENÚ (Slam Dunk)
@@ -249,7 +227,7 @@ tGBT_ColorRGB paletaCGA[CANT_COLORES] =
 
     {0xFF, 0xFF, 0xFF}  // 15: Usado como transparente por GBT
 };
-tGBT_ColorRGB paletaGameBoy[CANT_COLORES] =
+/*tGBT_ColorRGB paletaGameBoy[CANT_COLORES] =
 {
     // Colores base de UI (Tonos verdes de GameBoy)
     {0x0F, 0x38, 0x0F}, // 0: Verde Muy Oscuro (Bordes)
@@ -272,7 +250,7 @@ tGBT_ColorRGB paletaGameBoy[CANT_COLORES] =
 
     {0xFF, 0xFF, 0xFF}  // 15: Transparente
 };
-
+*/
 tGBT_ColorRGB paletaBlancoYNegro[CANT_COLORES] =
 {
     // Colores base de UI (Escala progresiva de Grises)

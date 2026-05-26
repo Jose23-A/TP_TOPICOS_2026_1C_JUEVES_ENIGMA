@@ -707,5 +707,77 @@ void mi_gbt_dibujar_texto_16(int x_pantalla, int y_pantalla, const char* texto, 
     }
 }
 
+void dibujar_cancha_fondo(int res_ancho, int res_alto, int offset_x, int offset_y, int ancho_tablero, int paleta_tipo)
+{
+    // 1. Asignación de colores (Madera lisa)
+    uint8_t c_madera = (paleta_tipo == 0) ? INDICE_PIEL_MEDIA : INDICE_GRIS_MED;  // Piel Media / Gris Medio
+    uint8_t c_pintura = (paleta_tipo == 0) ? INDICE_ROJO_OSC : INDICE_SOMBRA_OSC; // Rojo Oscuro / Sombra Oscura
+    uint8_t c_lineas  = INDICE_NEGRO;                          // NEGRO
 
+    // 2. Coordenadas base
+    int centro_x = offset_x + (ancho_tablero / 2);
+    int baseline_y = offset_y + 165;
+    int llave_ancho = ancho_tablero + 40;
+    int llave_alto = 90; // Reducido para dar espacio a la curva del triple
+    int top_llave = baseline_y - llave_alto;
+    int hoop_y = baseline_y - 15;
 
+    // 3. Ecuaciones de los círculos
+    int r_tiro_libre = llave_ancho / 2; // El diámetro encaja perfecto con la llave
+    int r_tiro_libre_sq = r_tiro_libre * r_tiro_libre;
+
+    // El triple envuelve al círculo de libres (distancia aro -> tope del círculo + margen)
+    int r_triple = 155;
+    int r_triple_sq = r_triple * r_triple;
+
+    for (int y = 0; y < res_alto; y++) {
+        for (int x = 0; x < res_ancho; x++) {
+
+            // Fondo de madera liso para toda la pantalla
+            uint8_t color_pixel = c_madera;
+
+            // Distancias delta desde los centros de giro
+            int dx = x - centro_x;
+            int dy_aro = y - hoop_y;
+            int dy_libres = y - top_llave;
+
+            int dist_aro_sq = dx*dx + dy_aro*dy_aro;
+            int dist_libres_sq = dx*dx + dy_libres*dy_libres;
+
+            // --- CAPAS GEOMÉTRICAS ---
+
+            // Capa 1: La Llave (Pintura proyectada hacia arriba)
+            if (y <= baseline_y && y >= top_llave &&
+                x >= centro_x - llave_ancho/2 && x <= centro_x + llave_ancho/2) {
+                color_pixel = c_pintura;
+            }
+
+            // Capa 2: Línea de fondo (Baseline)
+            if (y == baseline_y) {
+                color_pixel = c_lineas;
+            }
+
+            // Capa 3: Bordes rectos de la pintura
+            if (y <= baseline_y && y >= top_llave) {
+                if (x == centro_x - llave_ancho/2 || x == centro_x + llave_ancho/2) color_pixel = c_lineas;
+            }
+            // Línea de tiro libre recta
+            if (y == top_llave && x >= centro_x - llave_ancho/2 && x <= centro_x + llave_ancho/2) {
+                color_pixel = c_lineas;
+            }
+
+            // Capa 4: Círculo de Tiro Libre (Su diámetro encaja con los bordes rectos)
+            if (dist_libres_sq >= r_tiro_libre_sq - 60 && dist_libres_sq <= r_tiro_libre_sq + 60) {
+                color_pixel = c_lineas;
+            }
+
+            // Capa 5: Línea de 3 puntos (Pasa por encima de todo el conjunto)
+            if (y <= baseline_y && dist_aro_sq >= r_triple_sq - 200 && dist_aro_sq <= r_triple_sq + 200) {
+                color_pixel = c_lineas;
+            }
+
+            // Renderizado en memoria
+            gbt_dibujar_pixel(x, y, color_pixel);
+        }
+    }
+}

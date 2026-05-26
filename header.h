@@ -46,6 +46,10 @@
 #define NO_MOVIO 0
 
 #define INDICE_NEGRO    0
+#define INDICE_PIEL_MEDIA  3 // Para la madera a color
+#define INDICE_GRIS_MED    4 // Para la madera en grises (ajustá si usás otro gris)
+#define INDICE_ROJO_OSC    5 // Para la zona pintada a color
+#define INDICE_SOMBRA_OSC  5
 #define INDICE_GRIS_CL  7  // Gris Claro
 #define INDICE_GRIS_OS  8  // Gris Oscuro
 #define INDICE_AZUL_C   9  // Azul claro para la J
@@ -171,5 +175,7 @@ void dibujar_menu_pausa(const t_sistema *sys);
 
 void controlar_pantalla_gameover(t_sistema *sys, t_datosJuego *dt, t_jugador *player);
 void dibujar_pantalla_gameover(const t_sistema *sys);
+
+void dibujar_cancha_fondo(int res_ancho, int res_alto, int offset_x, int offset_y, int ancho_tablero, int paleta_tipo);
 
 #endif // HEADER_H_INCLUDED
