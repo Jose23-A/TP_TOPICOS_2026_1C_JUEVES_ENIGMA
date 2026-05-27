@@ -2,26 +2,24 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="TP_TOPICOS_2026_1C_JUEVES_ENIGMA" />
+		<Option title="Juego" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/TP_TOPICOS_2026_1C_JUEVES_ENIGMA" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/Juego" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="../../libgbt-dist-main/release/GBT_v2026.1C.01/include/" />
 				</Compiler>
 				<Linker>
 					<Add option="-lgbt" />
-					<Add directory="../../libgbt-dist-main/release/GBT_v2026.1C.01/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/TP_TOPICOS_2026_1C_JUEVES_ENIGMA" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/Juego" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -35,18 +33,25 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="../../../libgbt/include" />
 		</Compiler>
-		<Unit filename="func_main.c">
+		<Linker>
+			<Add option="-lgbt" />
+			<Add directory="../../../libgbt/lib" />
+		</Linker>
+		<Unit filename="../func_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="funciones.c">
+		<Unit filename="../funciones.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="header.h" />
-		<Unit filename="main.c">
+		<Unit filename="../header.h" />
+		<Unit filename="../main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="matrices.h" />
-		<Extensions />
+		<Unit filename="../matrices.h" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

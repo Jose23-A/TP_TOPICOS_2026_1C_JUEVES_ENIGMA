@@ -10,9 +10,6 @@ void inicializarSistema(t_sistema *sys, int argc, char* argv[])
     sys->res_alto = RES_ALTO_CGA;
     sys->escala = ESCALA_VENTANA;
 
-    sys->centro_x = sys->res_ancho / MITAD;
-    sys->centro_y = sys->res_alto / MITAD;
-
     cargar_configuracion(sys);
 
     if (argc >= MIN_ARG)
@@ -29,6 +26,9 @@ void inicializarSistema(t_sistema *sys, int argc, char* argv[])
         }
         sys->escala = atoi(argv[POS_ESCALA]);
     }
+
+    sys->centro_x = sys->res_ancho / MITAD;
+    sys->centro_y = sys->res_alto / MITAD;
 
     sys->corriendo = 1;
 
@@ -218,20 +218,27 @@ void dibujar_pantalla_puntajes(t_sistema *sys)
     FILE *fp = fopen("puntaje.dat", "rb");
     t_jugador j_aux;
     int puesto = 1;
-    int offset_y = 35; // Empezamos a listar más abajo
+    int offset_y = 40; // Empezamos a listar más abajo
 
     if (fp != NULL)
     {
-        while (puesto <= 5 && fread(&j_aux, sizeof(t_jugador), 1, fp) == 1)
+        while (puesto <= 3 && fread(&j_aux, sizeof(t_jugador), 1, fp) == 1)
         {
-            char texto_linea[40];
-            sprintf(texto_linea, "%d. %s - %d", puesto, j_aux.nombre, j_aux.puntaje);
+            char txt_puesto[5];
+            char txt_score[15];
 
-            // Centrado perfecto de cada línea sin importar el largo del nombre
-            int ancho_texto = strlen(texto_linea) * 9;
-            mi_gbt_dibujar_texto(sys->centro_x - (ancho_texto / MITAD), sys->centro_y + offset_y, texto_linea, INDICE_NEGRO);
+            sprintf(txt_puesto, "%d", puesto);
+            sprintf(txt_score, "%d", j_aux.puntaje);
 
-            offset_y += 12; // Salto de renglón compacto
+            // Columna Izquierda: El número de puesto
+            mi_gbt_dibujar_texto(sys->centro_x - 95, sys->centro_y + offset_y, txt_puesto, INDICE_NEGRO);
+            // Columna Central: El Nombre
+            mi_gbt_dibujar_texto(sys->centro_x - 65, sys->centro_y + offset_y, j_aux.nombre, INDICE_NEGRO);
+            // Columna Derecha: El Puntaje (ALINEADO A LA DERECHA)
+            int ancho_score = strlen(txt_score) * 9;
+            mi_gbt_dibujar_texto((sys->centro_x + 65) - ancho_score, sys->centro_y + offset_y, txt_score, INDICE_NEGRO);
+
+            offset_y += 15;
             puesto++;
         }
         fclose(fp);
@@ -244,7 +251,7 @@ void dibujar_pantalla_puntajes(t_sistema *sys)
     }
 
     // El botón de volver queda al fondo, visible en CGA y VGA
-    mi_gbt_dibujar_texto(sys->centro_x - 94, sys->centro_y + 95, "PULSE 'M' PARA VOLVER", INDICE_NEGRO);
+    mi_gbt_dibujar_texto(sys->centro_x - 94, sys->centro_y + 85, "PULSE 'M' PARA VOLVER", INDICE_NEGRO);
 }
 
 void controlar_pantalla_configuracion(t_sistema *sys)
@@ -312,38 +319,29 @@ void controlar_pantalla_configuracion(t_sistema *sys)
 void guardar_configuracion(t_sistema *sys)
 {
     FILE *fp = fopen("config.dat", "wb");
-    if (fp != NULL)
-    {
-        fwrite(&(sys->res_ancho), sizeof(int), 1, fp);
-        fwrite(&(sys->res_alto), sizeof(int), 1, fp);
-        fwrite(&(sys->escala), sizeof(int), 1, fp);
-        fwrite(&(sys->paleta_tipo), sizeof(int), 1, fp);
-        fwrite(&(sys->velocidad_base), sizeof(float), 1, fp);
-        fclose(fp);
-    }
+    if (fp == NULL)
+        return;
+
+    fwrite(&(sys->res_ancho), sizeof(int), 1, fp);
+    fwrite(&(sys->res_alto), sizeof(int), 1, fp);
+    fwrite(&(sys->escala), sizeof(int), 1, fp);
+    fwrite(&(sys->paleta_tipo), sizeof(int), 1, fp);
+    fwrite(&(sys->velocidad_base), sizeof(float), 1, fp);
+    fclose(fp);
 }
 
 void cargar_configuracion(t_sistema *sys)
 {
     FILE *fp = fopen("config.dat", "rb");
-    if (fp != NULL)
-    {
-        fread(&(sys->res_ancho), sizeof(int), 1, fp);
-        fread(&(sys->res_alto), sizeof(int), 1, fp);
-        fread(&(sys->escala), sizeof(int), 1, fp);
-        fread(&(sys->paleta_tipo), sizeof(int), 1, fp);
-        fread(&(sys->velocidad_base), sizeof(float), 1, fp);
-        fclose(fp);
-    }
-    else
-    {
-        // Valores por defecto si el archivo no existe la primera vez
-        sys->res_ancho = RES_ANCHO_CGA;
-        sys->res_alto = RES_ALTO_CGA;
-        sys->escala = ESCALA_VENTANA;
-        sys->paleta_tipo = 0;
-        sys->velocidad_base = 0.5f;
-    }
+    if (fp == NULL)
+        return;
+
+    fread(&(sys->res_ancho), sizeof(int), 1, fp);
+    fread(&(sys->res_alto), sizeof(int), 1, fp);
+    fread(&(sys->escala), sizeof(int), 1, fp);
+    fread(&(sys->paleta_tipo), sizeof(int), 1, fp);
+    fread(&(sys->velocidad_base), sizeof(float), 1, fp);
+    fclose(fp);
 }
 
 void dibujar_pantalla_configuracion(t_sistema *sys)

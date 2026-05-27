@@ -16,7 +16,6 @@
 */
 
 #include "header.h"
-//#include "matrices.h"
 
 int main(int argc, char* argv[])
 {
@@ -44,7 +43,10 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    gbt_aplicar_paleta(paletaCGA, CANT_COLORES, GBT_FORMATO_888);
+    if (sys.paleta_tipo == 0)
+        gbt_aplicar_paleta(paletaCGA, CANT_COLORES, GBT_FORMATO_888);
+    else
+        gbt_aplicar_paleta(paletaBlancoYNegro, CANT_COLORES, GBT_FORMATO_888);
 
     inicializarDatosJuego(&dt, &sys);
 
@@ -68,7 +70,6 @@ int main(int argc, char* argv[])
 
     printf("Programa iniciado. Ficha cayendo por gravedad.\n");
     printf("Pulse ESCAPE para salir.\n");
-
 
 
     /// --- Bucle Principal del Juego (Game Loop) ---
