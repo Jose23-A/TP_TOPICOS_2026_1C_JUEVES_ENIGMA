@@ -1,7 +1,7 @@
 #include "header.h"
 #include "matrices.h"
 
-void copiar_matriz(uint8_t destino[DIMENSION_PIEZA][DIMENSION_PIEZA], uint8_t origen[DIMENSION_PIEZA][DIMENSION_PIEZA])
+void copiar_matriz(uint8_t destino[DIMENSION_PIEZA][DIMENSION_PIEZA], const uint8_t origen[DIMENSION_PIEZA][DIMENSION_PIEZA])
 {
     for (int f = 0; f < DIMENSION_PIEZA; f++)
     {
@@ -711,7 +711,7 @@ void dibujar_cancha_fondo(int res_ancho, int res_alto, int offset_x, int offset_
 {
     // 1. Asignación de colores (Madera lisa)
     uint8_t c_madera = (paleta_tipo == 0) ? INDICE_PIEL_MEDIA : INDICE_GRIS_MED;  // Piel Media / Gris Medio
-    uint8_t c_pintura = (paleta_tipo == 0) ? INDICE_ROJO_OSC : INDICE_SOMBRA_OSC; // Rojo Oscuro / Sombra Oscura
+    uint8_t c_pintura = (paleta_tipo == 0) ? INDICE_ROJO_OSC : INDICE_GRIS_MED; // Rojo Oscuro / Sombra Oscura
     uint8_t c_lineas  = INDICE_NEGRO;                          // NEGRO
 
     // 2. Coordenadas base

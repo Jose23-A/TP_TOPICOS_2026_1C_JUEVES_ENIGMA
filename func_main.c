@@ -249,8 +249,6 @@ void dibujar_pantalla_puntajes(t_sistema *sys)
 
 void controlar_pantalla_configuracion(t_sistema *sys)
 {
-    int y_selector;
-
     if (gbt_tecla_presionada(GBTK_ABAJO))
     {
         sys->opcion_config++;
@@ -290,7 +288,10 @@ void controlar_pantalla_configuracion(t_sistema *sys)
                 // Recreamos la ventana en vivo para aplicar la resolución
                 gbt_destruir_ventana();
                 gbt_crear_ventana("Ficha Cayendo", sys->res_ancho, sys->res_alto, sys->escala);
-                gbt_aplicar_paleta(paletaCGA, CANT_COLORES, GBT_FORMATO_888);
+                if (sys->paleta_tipo == 0)
+                    gbt_aplicar_paleta(paletaCGA, CANT_COLORES, GBT_FORMATO_888);
+                else
+                    gbt_aplicar_paleta(paletaBlancoYNegro, CANT_COLORES, GBT_FORMATO_888);
                 break;
 
             case 2: // Alternar Velocidad Base de caída
@@ -619,7 +620,6 @@ int cargar_partida(t_datosJuego *dt)
 
 void dibujar_score(t_datosJuego *dt)
 {
-    int velocidad_ms = (int)(dt->tiempo_caida_actual * 1000);
 
     mi_gbt_dibujar_texto_16(dt->offset_x + (TABLERO_ANCHO * TAM_BLOQUE) + 15, dt->offset_y + 10, "SCORE", INDICE_NEGRO);
 

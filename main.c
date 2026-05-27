@@ -1,7 +1,19 @@
-// Apellido: Albarracin, José Emanuel
-// DNI: 40393967
-// Usuario: Jose23-A
-// Entrega: Sí
+/*
+ Apellido: Albarracin, José Emanuel
+ DNI: 40393967
+ Usuario: Jose23-A
+ Entrega: Sí
+
+ Apellido: Aleman Quispia, Paolo Omar
+ DNI: 45918917
+ Usuario: PaoloAleman
+ Entrega: No
+
+ Apellido: Quispe, Nicolas Esteban
+ DNI: 37760331
+ Usuario: Lunatick93
+ Entrega: No
+*/
 
 #include "header.h"
 //#include "matrices.h"

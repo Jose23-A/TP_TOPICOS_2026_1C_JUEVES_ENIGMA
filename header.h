@@ -141,18 +141,27 @@ extern tGBT_ColorRGB paletaCGA[CANT_COLORES];
 extern tGBT_ColorRGB paletaGameBoy[CANT_COLORES];
 extern tGBT_ColorRGB paletaBlancoYNegro[CANT_COLORES];
 
+void copiar_matriz(uint8_t destino[DIMENSION_PIEZA][DIMENSION_PIEZA], const uint8_t origen[DIMENSION_PIEZA][DIMENSION_PIEZA]);
+void mi_gbt_dibujar_texto_16(int x_pantalla, int y_pantalla, const char* texto, uint8_t color);
+
 void dibujar_cuadrado_base(uint16_t x_pantalla, uint16_t y_pantalla, uint8_t color_pieza, int);
 void dibujar_pieza(t_tetromino *p, int offset_x, int offset_y, int);
+
 void fijar_pieza(t_tetromino *p, uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
 void dibujar_tablero(const uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO], int offset_x, int offset_y, int);
+
 void cargar_nueva_pieza(const uint8_t pieza_origen[DIMENSION_PIEZA][DIMENSION_PIEZA], uint8_t pieza_destino[DIMENSION_PIEZA][DIMENSION_PIEZA]);
 int rotar_pieza(t_tetromino *p, int sentido, uint8_t tablero[][TABLERO_ANCHO]);
+
 void crear_pieza(t_tetromino *p);
-int limpiar_lineas(uint8_t [][TABLERO_ANCHO]);
+int limpiar_lineas(uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
+
 void dibujar_marco_tablero(int offset_x, int offset_y, uint8_t color_marco);
 void inicializarSistema(t_sistema *sys, int argc, char* argv[]);
+
 void inicializarDatosJuego(t_datosJuego *dt, t_sistema *sys);
 void inicializarTablero(t_datosJuego *dt);
+
 void movimientosPiezas(t_datosJuego *dt);
 void actualizar_juego(t_datosJuego *dt, t_sistema *sys);
 
@@ -176,6 +185,29 @@ void dibujar_menu_pausa(const t_sistema *sys);
 void controlar_pantalla_gameover(t_sistema *sys, t_datosJuego *dt, t_jugador *player);
 void dibujar_pantalla_gameover(const t_sistema *sys);
 
+void cargar_configuracion(t_sistema *sys);
+void guardar_configuracion(t_sistema *sys);
+
+void guardar_puntaje(t_jugador *nuevo_jugador);
+
+void guardar_partida(const t_datosJuego *dt);
+int existe_partida();
+
+void dibujar_slamdunk(int x_inicial, int y_inicial);
 void dibujar_cancha_fondo(int res_ancho, int res_alto, int offset_x, int offset_y, int ancho_tablero, int paleta_tipo);
+
+void mi_gbt_dibujar_texto(int x_pantalla, int y_pantalla, const char* texto, uint8_t color);
+int cargar_partida(t_datosJuego *dt);
+
+void dibujar_pantalla_decision(const t_sistema *sys);
+void dibujar_score(t_datosJuego *dt);
+
+int choca_izquierda (t_tetromino *p, uint8_t tablero[][TABLERO_ANCHO]);
+int choca_derecha (t_tetromino *p, uint8_t tablero[][TABLERO_ANCHO]);
+
+int choca_abajo(t_tetromino *p, uint8_t tablero[TABLERO_ALTO][TABLERO_ANCHO]);
+int es_posicion_valida(t_tetromino *p, uint8_t tablero[][TABLERO_ANCHO]);
+
+void dibujar_bloque_marco_basket(uint16_t x_pantalla, uint16_t y_pantalla);
 
 #endif // HEADER_H_INCLUDED
